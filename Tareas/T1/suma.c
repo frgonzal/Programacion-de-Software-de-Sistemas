@@ -4,16 +4,15 @@
 #include "suma.h"
 
 Bcd sumaBcd(Bcd x, Bcd y) {
-    unsigned int mask  = 0xf; // == 0b1111, para obtener los ultimos 4 bits
-    unsigned int carry = 0;    // para guardar lo que sobra en cada suma
-
-    Bcd suma;
+    int mask  = 0xf; // == 0b1111, para obtener los ultimos 4 bits
+    int carry = 0;    // para guardar lo que sobra en cada suma
+    int suma;
     Bcd ans = 0;
 
     for(int i=0; i<64; i+=4){//moverse 4 bits en cada iteracion
 
         //mover los bits a sumar a las primeras 4 posiciones y aplicar mascara
-        suma  = ((x>>i) & mask) + ((y>>i) & mask) + carry;
+        suma  = ((int)(x>>i) & mask) + ((int)(y>>i) & mask) + carry;
         carry = 0;
 
         //si el numero es mayor a 9, se le resta 10 y guardamos lo que sobra
@@ -23,7 +22,7 @@ Bcd sumaBcd(Bcd x, Bcd y) {
         }
 
         //sumar en la posicion correspondiente
-        ans |= suma<<i;
+        ans |= (Bcd)suma<<i;
     }
 
     if(!carry)//si el carry no es 0 ==> desborde
