@@ -18,13 +18,13 @@ Midiendo cuanto demora la solucion del profesor
 rm -f tiempo-ref.txt
 chmod +x prof.ref-x86_64
 ./prof.ref-x86_64 ref > /dev/null
-Tiempos de referencia =  1267
+Tiempos de referencia =  1291
 Verificando y comparando con su solucion
-./suma.bin 1267
+./suma.bin 1291
 Tests de unidad 
 Tests aleatorios
 Benchmark de 10240000 llamadas a sumaBcd
-Tiempo tomado por la solucion del profesor: 1267 milisegundos
-Tiempo de cpu usado por su version: 1507 milisegundos
-Porcentaje de sobrecosto: 18 %
+Tiempo tomado por la solucion del profesor: 1291 milisegundos
+Tiempo de cpu usado por su version: 1467 milisegundos
+Porcentaje de sobrecosto: 13 %
 Bien, felicitaciones

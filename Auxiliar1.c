@@ -40,7 +40,7 @@ int main(int argc, char **argv){
     int n = atoi(argv[1]);
     printf("%d\n", bits1(n));
     printf("%d\n", posicionBits(0b0011100, 0b11, 2));
-    printf("%d\n", repBits(0b))
+    printf("%d\n", repBits(0b0));
 
     return 0;
 }
