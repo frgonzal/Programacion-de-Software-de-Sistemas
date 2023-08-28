@@ -4,25 +4,24 @@
 
 #include "elim.h"
 
+int contar_espacio(char *str, int ns, char *pat, int np);
+
+int mystrcmp(char *str, char *str2);
+
 void eliminar(char *str, char *pat) {
-    long long ns = strlen(str);
-    long long np = strlen(pat);
-    if(ns < np || !np)//casos en los que no tiene sentido seguir
+    unsigned int ns = strlen(str);
+    unsigned int np = strlen(pat);
+    if(ns < np || !np || !ns)//casos en los que no tiene sentido seguir
         return;
 
-    char *end = str+np;
-    char *end_str = str+ns+1;
-    char tmp;
+    char *end     = str+np;
+    char *end_str = str+ns;
 
-    while(end < end_str){
-        tmp = *end;
-        *end = 0;
-        if(!strcmp(str, pat)){
-            *end = tmp;
+    while(end <= end_str){
+        if(mystrcmp(str, pat)){
             strcpy(str, end);
             end_str -= np;
         }else{
-            *end = tmp;
             str++;
             end++;
         }
@@ -30,24 +29,24 @@ void eliminar(char *str, char *pat) {
 }
 
 char *eliminados(char *str, char *pat) {
-    long long ns = strlen(str);
-    long long np = strlen(pat);
+    int ns = strlen(str);
+    int np = strlen(pat);
+    char *str2;
 
-    if(ns<np || !np){
-        char* p = malloc(ns+1);
-        strcpy(p, str);
-        return p;
+    if(ns<np || !np ){
+        str2 = (char*)malloc(ns+1);
+        strcpy(str2, str);
+        return str2;
     }
 
-    char str2[ns+1];
+    str2 = (char*)malloc(ns+1);
     char *aux = str2;
-
     char *ini = str;
     char *end = str+np;
-    char *end_str = str+ns+1;
+    char *end_str = str+ns;
     char tmp;
 
-    while(end<end_str){
+    while(end<=end_str){
         tmp = *end;
         *end = 0;
 
@@ -65,13 +64,45 @@ char *eliminados(char *str, char *pat) {
             end++;
         }
     }
+    while(ini<=end_str){
+        *aux = *ini;
+        ini++;
+        aux++;
+    }
+    return str2;
 
-    if(strcmp(ini, pat))//revisar lo que falta
-        strcpy(aux, ini);
-    else
-        *aux = 0;
+}
 
-    char *p = malloc(strlen(str2)+1);
-    strcpy(p, str2);
-    return p;
+int contar_espacio(char *str, int ns, char *pat, int np){
+    int contador = 1;
+
+    char *end = str+np;
+    char *end_str = str+ns;
+    char tmp;
+
+    while(end<=end_str){
+        tmp = *end;
+        *end = 0;
+        if(!strcmp(str, pat)){
+            *end = tmp;
+            str+=np;
+            end+=np;
+        }else{
+            contador++;
+            *end = tmp;
+            str++;
+            end++;
+        }
+    }
+    return contador;
+}
+
+int mystrcmp(char *str1, char *str2){
+    while(*str2){
+        if(*str1!=*str2)
+            return 0;
+        str1++;
+        str2++;
+    }
+    return 1;
 }
