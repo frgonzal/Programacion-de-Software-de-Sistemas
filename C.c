@@ -12,6 +12,10 @@ void mov_n(char *str, unsigned int n);
 
 int main(int argc, char **argv){
     char p[] = "12345";
+    strcpy(p, p+1);
+    printf("%s\n",p);
+
+    return 0;
     //printf("%d\n",(strlen(p)+1)*sizeof(char));
     //eliminar(p,"1");
     //printf("%s \n",p);
@@ -20,13 +24,6 @@ int main(int argc, char **argv){
     //printf("%d\n",strcmp("hola","hola"));//0 si son iguales
     //printf("%s, %d\n",p,strlen(p));
     //printf("%d\n",strcmp("hola","holaaaaa"));
-
-    char *x = p+1;
-    strcpy(p, x);
-
-    printf("%s\n",p);
-
-    return 0;
 }
 
 void eliminar(char *str, char *pat) {
