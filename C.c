@@ -2,50 +2,53 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+int mystrcmp(char *str1, char *str2);
 void eliminar(char *str, char *pat);
 char *eliminados(char *str, char *pat);
+void mystrcpy(char *str1, char *str2);
+
 
 void mov_n(char *str, unsigned int n);
 
 int main(int argc, char **argv){
-    char p[] = "hola";
+    char p[] = "12345";
     //printf("%d\n",(strlen(p)+1)*sizeof(char));
-    strcpy(p, "");
+    //eliminar(p,"1");
     //printf("%s \n",p);
     //*(p+4) = 0;
     //eliminar(p,"la");
     //printf("%d\n",strcmp("hola","hola"));//0 si son iguales
     //printf("%s, %d\n",p,strlen(p));
     //printf("%d\n",strcmp("hola","holaaaaa"));
+
+    char *x = p+1;
+    strcpy(p, x);
+
     printf("%s\n",p);
 
     return 0;
 }
 
 void eliminar(char *str, char *pat) {
+    unsigned int ns = strlen(str);
     unsigned int np = strlen(pat);
-    if(strlen(str) < np || !np)
+    if(ns < np || !np || !ns)//casos en los que no tiene sentido seguir
         return;
 
-    char *end = str+np;
-    char tmp = *end;
+    char *end     = str+np;
+    char *end_str = str+ns;
 
-    while(*end){
-        tmp = *end;
-        *end = 0;
-        if(!strcmp(str, pat)){
-            *end = tmp;
-            mov_n(str, np);
+    while(end <= end_str){
+        if(mystrcmp(str, pat)){
+            printf("%s\n",str);
+            printf("%s\n",end);
+            strcpy(str, end);
+            end_str -= np;
         }else{
-            *end = tmp;
             str++;
             end++;
         }
     }
-    if(!strcmp(str, pat)){
-        *str = 0;
-    } 
 }
 
 char *eliminados(char *str, char *pat) {
@@ -95,4 +98,23 @@ void mov_n(char* str, unsigned int n){
         end++;
     }
     *str = *end = 0;
+}
+
+int mystrcmp(char *str1, char *str2){
+    while(*str2){
+        if(*str1!=*str2)
+            return 0;
+        str1++;
+        str2++;
+    }
+    return 1;
+}
+
+void mystrcpy(char *str1, char *str2){
+    while(*str2){
+        *str1 = *str2;
+        str1++;
+        str2++;
+    }
+    *str1 = 0;
 }

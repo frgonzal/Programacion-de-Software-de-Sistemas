@@ -7,6 +7,7 @@
 int contar_espacio(char *str, int ns, char *pat, int np);
 
 int mystrcmp(char *str, char *str2);
+void mystrcpy(char *str1, char *str2);
 
 void eliminar(char *str, char *pat) {
     unsigned int ns = strlen(str);
@@ -19,8 +20,8 @@ void eliminar(char *str, char *pat) {
 
     while(end <= end_str){
         if(mystrcmp(str, pat)){
-            strcpy(str, end);
-            end_str -= np;
+            memmove(str, str+np, strlen(str));// ilegal??
+            end_str = str+strlen(str);
         }else{
             str++;
             end++;
@@ -41,23 +42,16 @@ char *eliminados(char *str, char *pat) {
 
     str2 = (char*)malloc(ns+1);
     char *aux = str2;
+
     char *ini = str;
     char *end = str+np;
     char *end_str = str+ns;
-    char tmp;
 
     while(end<=end_str){
-        tmp = *end;
-        *end = 0;
-
-        if(!strcmp(ini, pat)){//son iguales
-            *end = tmp;
-
+        if(mystrcmp(ini, pat)){//son iguales
             ini += np; //avanzar np
             end += np;
         }else{
-            *end = tmp;
-
             *aux = *ini; // copiar y continuar;
             aux++;
             ini++;
@@ -105,4 +99,14 @@ int mystrcmp(char *str1, char *str2){
         str2++;
     }
     return 1;
+}
+
+
+void mystrcpy(char *str1, char *str2){
+    while(*str2){
+        *str1 = *str2;
+        str1++;
+        str2++;
+    }
+    *str1 = 0;
 }
