@@ -1,3 +1,4 @@
+//Franco González Leiva
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,23 +6,33 @@
 #include "elim.h"
 
 unsigned int contar_espacio(char *str, unsigned int ns, char *pat, unsigned int np);
+int mystrcmp(char *str1, char *str2);
 
 void eliminar(char *str, char *pat) {
     unsigned int ns = strlen(str);
     unsigned int np = strlen(pat);
     if(ns < np || !np)//casos en los que no tiene sentido seguir
         return;
-    char *end     = str+np;
+
+    char *ini = str;
+    char *end = str+np;
     char *end_str = str+ns;
 
     while(end <= end_str){
-        if(!strncmp(str, pat, np)){
-            memmove(str, str+np, strlen(str));
-            end_str = str+strlen(str);
+        if(*ini==*pat && mystrcmp(ini+1, pat+1)){
+            ini+=np;
+            end+=np;
         }else{
+            *str = *ini;
             str++;
+            ini++;
             end++;
         }
+    }
+    while(ini<=end_str){
+        *str=*ini;
+        str++;
+        ini++;
     }
 }
 
@@ -42,7 +53,7 @@ char *eliminados(char *str, char *pat) {
     char *end_str = str+ns;
 
     while(end<=end_str){
-        if(!strncmp(ini, pat, np)){
+        if(*ini==*pat && mystrcmp(ini+1, pat+1)){
             ini += np;
             end += np;
         }else{
@@ -52,8 +63,12 @@ char *eliminados(char *str, char *pat) {
             end++;
         }
     }
-    if(ini<=end_str)
-        strcpy(aux, ini);
+    while(ini<end_str){
+        *aux=*ini;
+        aux++;
+        ini++;
+    }
+    *aux=0;
     return str2;
 }
 
@@ -62,7 +77,7 @@ unsigned int contar_espacio(char *str, unsigned int ns, char *pat, unsigned int 
     char *end     = str+np;
     char *end_str = str+ns;
     while(end<=end_str){
-        if(!strncmp(str, pat, np)){
+        if(*str==*pat && mystrcmp(str+1, pat+1)){
             str+=np;
             end+=np;
         }else{
@@ -72,4 +87,15 @@ unsigned int contar_espacio(char *str, unsigned int ns, char *pat, unsigned int 
         }
     }
     return contador + np;
+}
+
+
+int mystrcmp(char *str1, char *str2){
+    while(*str2){
+        if(*str1!=*str2)
+            return 0;
+        str1++;
+        str2++;
+    }
+    return 1;
 }
