@@ -11,9 +11,9 @@ void mystrcpy(char *str1, char *str2);
 void mov_n(char *str, unsigned int n);
 
 int main(int argc, char **argv){
-    char p[] = "12345";
-    strcpy(p, p+1);
-    printf("%s\n",p);
+    char *p = "ho";
+    char *q = "holaaa";
+    printf("%d \n", strncmp(p, q, strlen(q)));
 
     return 0;
     //printf("%d\n",(strlen(p)+1)*sizeof(char));
