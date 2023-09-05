@@ -6,7 +6,6 @@
 #include "elim.h"
 
 unsigned int contar_espacio(char *str, unsigned int ns, char *pat, unsigned int np);
-int mystrcmp(char *str1, char *str2);
 
 void eliminar(char *str, char *pat) {
     unsigned int ns = strlen(str);
@@ -19,21 +18,16 @@ void eliminar(char *str, char *pat) {
     char *end_str = str+ns;
 
     while(end <= end_str){
-        if(*ini==*pat && mystrcmp(ini+1, pat+1)){
+        if(*ini==*pat && !strncmp(ini+1, pat+1, np-1)){
             ini+=np;
             end+=np;
         }else{
-            *str = *ini;
-            str++;
-            ini++;
+            *str++ = *ini++;
             end++;
         }
     }
-    while(ini<=end_str){
-        *str=*ini;
-        str++;
-        ini++;
-    }
+    while(ini<=end_str)
+        *str++=*ini++;
 }
 
 char *eliminados(char *str, char *pat) {
@@ -53,21 +47,16 @@ char *eliminados(char *str, char *pat) {
     char *end_str = str+ns;
 
     while(end<=end_str){
-        if(*ini==*pat && mystrcmp(ini+1, pat+1)){
+        if(*ini==*pat && !strncmp(ini+1, pat+1, np-1)){
             ini += np;
             end += np;
         }else{
-            *aux = *ini;
-            aux++;
-            ini++;
+            *aux++ = *ini++;
             end++;
         }
     }
-    while(ini<end_str){
-        *aux=*ini;
-        aux++;
-        ini++;
-    }
+    while(ini<end_str)
+        *aux++=*ini++;
     *aux=0;
     return str2;
 }
@@ -77,7 +66,7 @@ unsigned int contar_espacio(char *str, unsigned int ns, char *pat, unsigned int 
     char *end     = str+np;
     char *end_str = str+ns;
     while(end<=end_str){
-        if(*str==*pat && mystrcmp(str+1, pat+1)){
+        if(*str==*pat && !strncmp(str+1, pat+1, np-1)){
             str+=np;
             end+=np;
         }else{
@@ -87,15 +76,4 @@ unsigned int contar_espacio(char *str, unsigned int ns, char *pat, unsigned int 
         }
     }
     return contador + np;
-}
-
-
-int mystrcmp(char *str1, char *str2){
-    while(*str2){
-        if(*str1!=*str2)
-            return 0;
-        str1++;
-        str2++;
-    }
-    return 1;
 }
