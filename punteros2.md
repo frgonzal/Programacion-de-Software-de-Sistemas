@@ -113,7 +113,7 @@ double integral(double xi, double xf, int n){
 }
 ```
 ```c
-double integral2(double(*fn)(double x), double xi, double xf, int n){
+double integral2( double(*fn)(double x), double xi, double xf, int n){
     double h = (xf-xi)/n;
     double sum = ( (*fn)(xi) + (*fn)(xf) )/2;
     for(int k=1; k<n; k++){
@@ -126,6 +126,124 @@ T fn(t1 x, t2 y,..., tn z)
 
 T (*fn2)(t1 x, t2 y,..., tn z)
 (*fn2)(x, y, x)
+
+*Arg  ===  tipo_fn(*nom_var)(parametros)
+*Uso => (*fn)(parametros) != *fn(parametros)
+
+## Typedef para funciones
+
+typedef T(*nuevo_tipo)(parametros);
+
+#### sea double f(double x)
+```c
+typedef double(*Fun)(double x);
+```
+==> Fun es un PTR
+==> Fun tipo nuevo para todo fn retornan double y recibe double
+```c
+double integral2(Fun fn, double xi, double xf, int n){
+    double h = (xf-xi)/n;
+    double sum = ( (*fn)(xi) + (*fn)(xf) )/2;
+    for(int k=1; k<n; k++){
+        sum += (*fn)(xi+k*n);
+    }
+    return sum*h;
+}
+```
+
+
+```c
+double h(double a, double b, double c, double xi, double xf, int n){
+    h(...) = //integral entre xf-xi de (ax^2 + bx + c)dx
+}
+```
+funcion integral no recibe funcion con mas de un parametro
+```c
+double poli(double a, double b, double c, double x){
+    return a*x*x + b*x + c;
+}
+```
+
+#### metodo largo
+crear nueva funcion integral
+```c
+double integral2(double(*fn)(double a, double b, double c, double x), double xi, double xf, int n){
+    double h = (xf-xi)/n;
+    double sum = ((*fn)(a,b,c,xi) + (*fn)(a,b,c,xf))/2;
+    for(int k=1;k<n;k++>)
+        sum+=(*fn)(a,b,c,xi+h*k);
+    return sum*h;
+}
+double h(double a, double b, double c, double xi, double xf, int n){
+    return integral2(poli, a, b, c, xi, xf, n);
+}
+```
+
+#### variables globales
+```c
+double g_a, ...;
+double poli2(double x){
+    return a*x*x + b*x + c;
+}
+double h(double a, double b, double c, double xi, double xf, int n){
+    //asignar variables;
+    return integral(poli2, xi, xf, n)
+}
+```
+
+### Scope
+fragmento de codigo donde esta definida la variable
+
+
+
+## puntero opaco
+```c
+(void *p)
+```
+no tiene tipo
+
+hay que realizar cast ptro 
+
+```c
+void *p;
+int *p_n = (int*)p;
+```
+#### version 3 funcion integral
+version mas general de integral 3, puede recibir cualquier estructura (cantidad indefinida de parametros) y cualquier funcion
+```c
+double integral3(double(*fn)(void *p, double x), double xi, double xf, int n, void *ptr){
+    // void *ptr contiene parametros extra para fn
+    double h = (xf-xi)/n;
+    double sum = ((*fn)(ptr, xi) + (*fn)(ptr, xf))/2;
+    for(int k=1;k<n;k++){
+        sum+= ((*fn)(ptr,xi+h*k));
+    }
+    return h*sum;
+}
+```
+estructura para polinomio
+```c
+typedef struct abc{
+    double a, b, c;
+}ABC;
+```
+```c
+double poli3(void *p, double x){
+    ABC *ptr = (ABC*)p;
+    double a = ptr -> a;
+    double b = ptr -> b;
+    double c = ptr -> c;
+    return a*x*x + b*x + c;
+}
+```
+```c
+double h(double a, double b, double c, double xi, double xf, int n){
+    ABC p = {a, b, c};
+    return integral3(poli3, xi, xf, n, &p);
+}
+```
+
+
 
 
 
