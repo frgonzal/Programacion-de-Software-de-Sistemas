@@ -33,3 +33,13 @@ Tareas/T2/resultados.txt
 Tareas/T2/test-elim.c
 Tareas/T2/elim.bin-san
 Tareas/T2/tiempo-ref.txt
+
+#Tarea3
+Tareas/T3/Makefile                                                             
+Tareas/T3/prev.cbp                                                             
+Tareas/T3/prev.h                                                               
+Tareas/T3/prev.layout                                                          
+Tareas/T3/prof.ref-aarch64                                                     
+Tareas/T3/prof.ref-x86_64                                                      
+Tareas/T3/README.txt                                                           
+Tareas/T3/test-prev.c                                                          
