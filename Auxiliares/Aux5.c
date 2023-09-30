@@ -16,6 +16,12 @@ void podar(Nodo **pa, int y){
     else{
         podar(&nodo_a->izq, y);
         *pa = nodo_a -> izq;
+        /*
+        Al hacer '*pa = nodo_a -> izq;' *pa (el valor del puntero) guardara la direccion
+        del nodo izq, si se modifica luego de guardar eso no modificara lo que se guardo
+        en '*pa'.
+        ==> primero modificar, luego guardar.
+        */
     }
 }
 
@@ -30,7 +36,7 @@ int reemplazarNodoK(Nodo2 **pa, int k, Nodo2 *b){
     //retorna min(k, tamaño arbol)
     if (*pa == NULL)
         return 0;    
-    Nodo *nodo_actual = *pa;
+    Nodo2 *nodo_actual = *pa;
     int tam_izq = reemplazarNodoK(&nodo_actual->izq, k, b);
     if (tam_izq == k)
         return k;
