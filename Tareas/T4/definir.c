@@ -1,3 +1,4 @@
+// Franco Gonzalez
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,63 +13,66 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    char *file = argv[1];
-    char *key  = argv[2];
-    char *def  = argv[3];
-    FILE *f = fopen(file, "r+");
-    if(f == NULL){
-        perror(file);
+    char *fileName   = argv[1];
+    char *key        = argv[2];
+    char *definition = argv[3];
+
+    FILE *fp = fopen(fileName, "r+");
+    if(fp == NULL){
+        perror(fileName);
         return 1;
     } 
 
     int lineSize = 81;
-
     char buf[lineSize+1];
+    buf[lineSize] = 0;
     char *buf_r;
 
-    fseek(f, 0, SEEK_END);
+    /* numero de lineas */
+    fseek(fp, 0, SEEK_END);
+    int fileSize = ftell(fp)/lineSize;
 
-    int fileSize = ftell(f);
-    if(fileSize%(81*sizeof(char)) != 0){
-        fprintf(stderr, "%s: linea 4 de tamaño incorrecto\n", file);
-        return 1;
-    }
-    fileSize = fileSize/(81*sizeof(char));
+    int line = hash_string(key)%fileSize;
+    int initial_line = line;
 
-    int pos = hash_string(key)%fileSize;
-    int pos_cpy = pos;
+    fseek(fp, line*lineSize, SEEK_SET);
 
     for(;;){
+
         buf_r = buf;
+        if(fread(buf, sizeof(char), lineSize, fp) > 0){
 
-        fseek(f, pos*lineSize, SEEK_SET);
-        fread(buf, sizeof(char), lineSize, f);
-        buf[lineSize] = 0;
-        fseek(f, -lineSize, SEEK_CUR);
+            if(*buf_r == ' '){//si el primer valor es un espacio
+                /*
+                 volver puntero al inicio de la linea y copiar
+                 <llave>:<def>...\n
+                */
+                fseek(fp, -lineSize, SEEK_CUR);
+                fwrite(key, sizeof(char), strlen(key), fp);
+                fputc(':', fp);
+                fwrite(definition, sizeof(char), strlen(definition), fp);
+                break;
 
-        if( *buf_r == ' ' ){//vacio
-            fwrite(key, sizeof(char), strlen(key), f); //copiar llave
-            fwrite(":", sizeof(char), 1, f);
-            fwrite(def, sizeof(char), strlen(def), f); //copiar definicion
-            break;
+            }else{//no es vacio
+                while(*buf_r != ':' && *buf_r != 0)
+                    buf_r++;
+                *buf_r = 0;
 
-        }else{//no es vacio
-            while(*buf_r != ':')
-                buf_r++;
-            *buf_r = 0;   
-
-            if( !strcmp(buf, key) ){//ya esta
-                fprintf(stderr, "La llave %s ya se encuentra en el diccionario\n", key);
-                return 1;
-            }
-
-            pos = (pos+1)%fileSize;
-            if(pos == pos_cpy){ // si es igual al primer valor entonces dio la vuelta
-                fprintf(stderr,"%s: el diccionario esta lleno\n", file);
-                return 1;
+                if( !strcmp(buf, key) ){//ya esta
+                    fprintf(stderr, "La llave %s ya se encuentra en el diccionario\n", key);
+                    fclose(fp);
+                    return 1;
+                }
             }
         }
+
+        line = (line+1)%fileSize;  //avanzar
+        if(line == initial_line){  // si es igual al primer valor entonces dio la vuelta
+            fprintf(stderr,"%s: el diccionario esta lleno\n", fileName);
+            fclose(fp);
+            return 1;
+        }
     }
-    fclose(f);
+    fclose(fp);
     return 0;
 }
