@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
                    <llave>:<def>...\n */
                 fseek(fp, -lineSize, SEEK_CUR);
                 fwrite(key, sizeof(char), strlen(key), fp);
-                fputc(':', fp);
+                fwrite(":", sizeof(char), 1, fp);
                 fwrite(definition, sizeof(char), strlen(definition), fp);
                 break;
 
