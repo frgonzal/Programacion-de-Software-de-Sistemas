@@ -1,20 +1,34 @@
 #include <string.h>
 
 int wordsn(char *s){
-  int n=0;
+  int c = *s;
+  int len = 0;
+  int espacio = ' ';
 
-  while(*s){
-    if(*s==' '){
+  for(;;){
+
+    if(c == 0)
+      break;
+
+    if(c == espacio){
       s++;
+      c=*s;
       continue;
     }
-    //while en palabra
-    while(*s!=' ' && *s)
+
+    for(;;){//    para entrar al ciclo no puede ser igual a 0 ni a ' '
+      if(c == espacio){
+        break;
+      }
+      if(c==0){
+        break;
+      }
       s++;
-    //al terminar palabra
-    n++;
+      c=*s;
+    }// al terminar aumentar contador
+    len++;
   }
-  return n;
+  return len;
 }
 
 int strCmp(char *s1, char *s2) {

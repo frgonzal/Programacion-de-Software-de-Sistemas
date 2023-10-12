@@ -8,34 +8,32 @@
 	.globl	wordsn
 	.type	wordsn, @function
 wordsn:
-	mv	a5,a0			## a5 = s
-	lbu	a4,0(a0)		## a4 = s
-	beq	a4,zero,.L9  	## caso en el que no hay palabra
-	li	a0,0 			## 
+	mv	a4,a0
+	lbu	a5,0(a0)
+	beq	a5,zero,.L9
+	li	a0,0
 	li	a3,32
-	j	.L8
-.L3:
-	addi	a5,a5,1		## 
-	j	.L6
-.L5:
-	addi	a0,a0,1
-.L6:
-	lbu	a4,0(a5)		## c = *s
-	beq	a4,zero,.L12	## c == 0 ==> ret
-.L8:
-	beq	a4,a3,.L3
-	lbu	a4,0(a5)
-	beq	a4,a3,.L5
-.L4:
-	beq	a4,zero,.L5
-	addi	a5,a5,1
-	lbu	a4,0(a5)
-	bne	a4,a3,.L4
+	j	.L3
+.L10:
+	lbu	a5,1(a4)
+	addi	a4,a4,1
 	j	.L5
-.L12:				## retorno final
-	ret
+.L6:
+	addi	a0,a0,1
+.L5:
+	beq	a5,zero,.L1
+.L3:
+	beq	a5,a3,.L10
+	beq	a5,zero,.L6
+.L7:
+	addi	a4,a4,1
+	lbu	a5,0(a4)
+	beq	a5,a3,.L6
+	bne	a5,zero,.L7
+	j	.L6
 .L9:
-	li	a0,0		## solo util en la primera cond
+	mv	a0,a5
+.L1:
 	ret
 	.size	wordsn, .-wordsn
 	.align	2
@@ -72,24 +70,24 @@ sort:
 	slli	s3,a1,2
 	addi	s3,s3,-4
 	add	s3,a0,s3
-	bgeu	a0,s3,.L15
+	bgeu	a0,s3,.L13
 	mv	s4,a0
 	mv	s0,a0
-	j	.L19
-.L17:
+	j	.L17
+.L15:
 	sw	s2,0(s0)
 	sw	s1,4(s0)
 	mv	s0,s4
-.L19:
+.L17:
 	lw	s1,0(s0)
 	lw	s2,4(s0)
 	mv	a1,s2
 	mv	a0,s1
 	call	strCmp
-	bgt	a0,zero,.L17
+	bgt	a0,zero,.L15
 	addi	s0,s0,4
-	bgtu	s3,s0,.L19
-.L15:
+	bgtu	s3,s0,.L17
+.L13:
 	lw	ra,28(sp)
 	lw	s0,24(sp)
 	lw	s1,20(sp)

@@ -40,68 +40,46 @@ sort:                   # void sort(uint nums[], int n) { // registros a0, a1
     # en 0(sp), 4(sp), ... o 44(sp)
     # El valor de p esta temporalmente en el registro t0
     # No puede hacer mas trabajo que la comparacion (no puede usar ret)
-    lw      a0,0(t0)    #     int rc= strcmp(p[0], p[1]); // registro t1
-    lw      a1,4(t0)
-                        #     // valor retornado queda en registro a0
-                        #     // p ya no esta en el registro t0
-	mv	a5,a0
-    mv  a6,a1
+    lw      a1, 0(t0)    #     int rc= strcmp(p[0], p[1]); // registro t1
+                         #     // valor retornado queda en registro a0
+                         #     // p ya no esta en el registro t0
+
+    li   a2, 32          # ' '
+    li   a5, 0           # para comprobar si se lee primera o segunda palabra
     
-.contarS1:
-	lbu	a4,0(a5)		    ## a4 = s
-	li	a0,0 			    ## a0 = 0
-	li	a3,32			    ## a2 = ' '
-	beq	a4,zero,.contarS2     	## caso en el que no hay palabra
-	j	.L18				## salto a L8
-.L13: 					    ## 
-	addi	a5,a5,1		    ## s++
-	j	.L16				## L6
-.L15:
-	addi	a0,a0,1		    ## a0++??
-.L16:					    ## while(*s)
-	lbu	a4,0(a5)		    ## //c = *s
-	beq	a4,zero,.contarS2	    ## //c == 0 ==> ret
-.L18:					    ## 
-	beq	a4,a3,.L13 		    ## c == ' ' ==> continue
-	lbu	a4,0(a5)		    ## c = s
-	beq	a4,a3,.L15		    ## c == ' ' ==> 
-.L14:					    ## do
-	beq	a4,zero,.L15		## c==0 => n++ => ret
-	addi	a5,a5,1		    ## s++
-	lbu	a4,0(a5)		    ## c = *s
-	bne	a4,a3,.L14		    ## while(c!=' ')
-	j	.L15
+.contarn:
+    li   a0, 0           ## len = 0
+    lbu  a4, 0(a1)       ## c   = *s
+    j    .forcontar      ## for(;;)
 
-.contarS2:
-    mv  t1,a0           
-	mv	a5,a6			    
-	lbu	a4,0(a5)		    
-	li	a0,0 			    
-	li	a3,32			    
-	beq	a4,zero,.cmp_final 	
-	j	.L28			
-.L23:					   
-	addi	a5,a5,1		   
-	j	.L26			
-.L25:
-	addi	a0,a0,1		  
-.L26:					    
-	lbu	a4,0(a5)		    
-	beq	a4,zero,.cmp_final
-.L28:	
-	beq	a4,a3,.L23
-	lbu	a4,0(a5)		 
-	beq	a4,a3,.L25
-.L24:			
-	beq	a4,zero,.L25
-	addi	a5,a5,1	
-	lbu	a4,0(a5)		  
-	bne	a4,a3,.L24
-	j	.L25
+.espacio:
+    addi a1, a1, 1      ## s++;
+    lbu  a4, 0(a1)      ## c=*s;
 
-.cmp_final:
-    sub t1,t1,a0
+.forcontar:
+    beq  a4, zero, .finalcontar         ## si es 0 terminar
+    beq  a4, a2,   .espacio             ## si es espacio a avanzar
 
+.palabra:
+    beq  a4, zero, .finalpalabra        ## break;
+    beq  a4, a2,   .finalpalabra        ## break;
+    addi a1, a1, 1                      ## s++;
+    lbu  a4, 0(a1)                      ## c = *s;
+    j    .palabra                       ## repetir mientra este en la palabra
+
+.finalpalabra:
+    addi  a0, a0, 1                     ## len++;
+    j     .forcontar                    
+
+.segundapalabra:
+    mv    t1, a0                        ## guardar a0
+    addi  a5, a5, 1                     ## ahora a5 != 0
+    lw    a1, 4(t0)                     ## cargar s2
+    j    .contarn                       ## volver a contar
+
+.finalcontar:
+    beq a5, zero, .segundapalabra       ## si es 0 => no he leido segunda palabra
+    sub t1, t1, a0                      ## resultado
 
 
     # En el registro t1 debe quedar la conclusion de la comparacion:
