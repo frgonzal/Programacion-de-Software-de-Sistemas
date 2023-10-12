@@ -78,6 +78,21 @@ Tareas/T4/test-definir.sh
 Tareas/T4/vacio.txt
 Tareas/T4/resultados.txt
 
+Tareas/T5/ign.txt
+Tareas/T5/Makefile
+Tareas/T5/README.txt
+Tareas/T5/resultados.txt
+Tareas/T5/sort-c-wc
+Tareas/T5/sort-c-wc.o
+Tareas/T5/sort-rv-wc
+Tareas/T5/sort-rv-wc.o
+Tareas/T5/sort.h
+Tareas/T5/target.gdb
+Tareas/T5/test-sort.c
+Tareas/T5/test-sort.o
+Tareas/T5/wc.zip
+
+
 *zip
 Auxiliares/
 Controles/
