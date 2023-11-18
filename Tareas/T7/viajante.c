@@ -13,6 +13,7 @@
 int leer(int fd, void *vbuf, int n);
 static double dist(int z[], int n, double **m);
 
+
 double viajante_par(int z[], int n, double **m, int nperm, int p) {
     double min = DBL_MAX;
     // Complete esta funcion
@@ -67,24 +68,22 @@ double viajante_par(int z[], int n, double **m, int nperm, int p) {
     return min;
 }
 
-static double dist(int z[], int n, double **m) {
-  double d= m[z[n]][0];    // distancia de z[n] a 0
-  for (int i=0; i<n; i++) {
-      d += m[z[i]][z[i+1]];
-  }
-  return d;
-}
-
-
-
 int leer(int fd, void *vbuf, int n) {
     char *buf= vbuf;
     do {
         int rc= read(fd, buf, n);
         if (rc<=0)
             return 1; /* fracaso: error o fin del archivo/pipe/socket */
-        n-= rc; /* descontamos los bytes leídos */
-        buf+= rc; /* avanzamos el buffer para no reescribir lo leido previamente */
-    } while (n>0); /* mientras no leamos todo lo que esperamos */
-    return 0; /* exito */
+        n-= rc;       /* descontamos los bytes leídos */
+        buf+= rc;     /* avanzamos el buffer para no reescribir lo leido previamente */
+    } while (n>0);    /* mientras no leamos todo lo que esperamos */
+    return 0;         /* exito */
+}
+
+static double dist(int z[], int n, double **m) {
+    double d= m[z[n]][0];    // distancia de z[n] a 0
+    for (int i=0; i<n; i++) {
+        d += m[z[i]][z[i+1]];
+    }
+    return d;
 }
