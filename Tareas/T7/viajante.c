@@ -1,3 +1,5 @@
+/* Franco González */
+
 #define _XOPEN_SOURCE 500
 
 #include <stdio.h>
@@ -11,7 +13,6 @@
 #include "viajante.h"
 
 int leer(int fd, void *vbuf, int n);
-static double dist(int z[], int n, double **m);
 
 
 double viajante_par(int z[], int n, double **m, int nperm, int p) {
@@ -29,35 +30,37 @@ double viajante_par(int z[], int n, double **m, int nperm, int p) {
     pid_t pids[p];
     int fds[p][2]; 
 
+    /* Poner a trabajar a los hijos */
     for(int i=0; i<p; i++){
         pipe(fds[i]);
         pids[i] = fork();
         srandom(getUSecsOfDay()*getpid());
 
-
-        //calcular valor para los hijos
-        if (pids[i] == 0){//hijo
+        /* calcular valor para los hijos */
+        if (pids[i] == 0){  //hijo
             close(fds[i][0]);
-
-
             int x[n+1];
-            viajante(x, n, m, nperm/p);
 
-            write(fds[i][1], &x, (n+1)*sizeof(int));
+            double d = viajante(x, n, m, nperm/p);
+
+            write(fds[i][1], &d, sizeof(double));    //distancia
+            write(fds[i][1], &x, (n+1)*sizeof(int)); //camino
             exit(0);
-        }else{
+        }else{  //padre
             close(fds[i][1]);//padre no escribe
         }
     }
 
+    /* Juntar todo en el padre */
     for(int i=0; i<p; i++){
+        double d;
         int x[n+1];
 
-        leer(fds[i][0], &x, (n+1)*sizeof(int));
+        leer(fds[i][0], &d, sizeof(double));    //distancia
+        leer(fds[i][0], &x, (n+1)*sizeof(int)); // camino
         close(fds[i][0]);
         waitpid(pids[i], NULL, 0);
 
-        double d = dist(x, n, m);
         if(d < min){
             min = d;
             for(int j=0; j<=n; j++)
@@ -78,12 +81,4 @@ int leer(int fd, void *vbuf, int n) {
         buf+= rc;     /* avanzamos el buffer para no reescribir lo leido previamente */
     } while (n>0);    /* mientras no leamos todo lo que esperamos */
     return 0;         /* exito */
-}
-
-static double dist(int z[], int n, double **m) {
-    double d= m[z[n]][0];    // distancia de z[n] a 0
-    for (int i=0; i<n; i++) {
-        d += m[z[i]][z[i+1]];
-    }
-    return d;
 }
